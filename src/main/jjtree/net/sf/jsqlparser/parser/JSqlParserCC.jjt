@@ -190,6 +190,7 @@ TOKEN: /* SQL Keywords. prefixed with K_ to avoid name clashes */
 |   <K_DISABLE : "DISABLE">
 |   <K_DISCONNECT:"DISCONNECT">
 |   <K_DISTINCT:"DISTINCT">
+|   <K_DISTRIBUTED:"DISTRIBUTED">
 |   <K_DIV:"DIV">
 |   <K_DDL:"DDL">
 |   <K_DML:"DML">
@@ -331,6 +332,7 @@ TOKEN: /* SQL Keywords. prefixed with K_ to avoid name clashes */
 |   <K_QUERY:"QUERY">
 |   <K_QUICK : "QUICK">
 |   <K_QUIESCE: "QUIESCE">
+|   <K_RANDOMLY: "RANDOMLY">
 |   <K_RANGE: "RANGE">
 |   <K_READ: "READ" >
 |   <K_RECYCLEBIN: "RECYCLEBIN">
@@ -341,6 +343,7 @@ TOKEN: /* SQL Keywords. prefixed with K_ to avoid name clashes */
 |   <K_REGISTER: "REGISTER">
 |   <K_RENAME:"RENAME">
 |   <K_REPLACE:"REPLACE">
+|   <K_REPLICATED: "REPLICATED">
 |   <K_RESUMABLE: "RESUMABLE">
 |   <K_RESUME: "RESUME">
 |   <K_RESTRICT: "RESTRICT">
@@ -1662,6 +1665,7 @@ String RelObjectNameWithoutValue() :
 
       /* Keywords for ALTER SESSION */
       /* | tk=<K_NAME> */ | tk=<K_TIMEOUT> | tk=<K_PARALLEL>
+      | tk=<K_RANDOMLY> | tk=<K_REPLICATED>
 
       | tk=<K_LINK>
       /* Keywords for ALTER SYSTEM */
@@ -4831,6 +4835,25 @@ List<String> PathSpecification():
     }
 }
 
+Distributed Distributed(): {
+    Token tk = null;
+    List<String> colNames = null;
+    String colName = null;
+    Distributed res = null;
+}
+{
+    (
+    (<K_BY> {colNames = new ArrayList<String>(); }
+        "(" colName = RelObjectNameExt() {colNames.add(colName); }
+        ("," colName = RelObjectNameExt() {colNames.add(colName); })*
+        ")"
+        { res = new Distributed(colNames); }
+    )
+    | ( tk=<K_RANDOMLY>|tk=<K_REPLICATED>) {res = new Distributed(DistributionMode.valueOf(tk.image.toUpperCase())); }
+    )
+    { return res; }
+}
+
 CreateTable CreateTable():
 {
     CreateTable createTable = new CreateTable();
@@ -4863,6 +4886,7 @@ CreateTable CreateTable():
     ReferentialAction.Action action = null;
     String tableColumn = null;
     List<String> columns = new ArrayList<String>();
+    Distributed dist = null;
 }
 {
     <K_CREATE>
@@ -5023,6 +5047,7 @@ CreateTable CreateTable():
     <K_LIKE> ( LOOKAHEAD("(" Table() ")") "(" likeTable=Table() { createTable.setLikeTable(likeTable, true); } ")"
                  | likeTable=Table() { createTable.setLikeTable(likeTable, false); } )
     ]
+    [<K_DISTRIBUTED> dist=Distributed() {createTable.setDistributed(dist); }]
     {
         createTable.setTable(table);
         if (indexes.size() > 0)

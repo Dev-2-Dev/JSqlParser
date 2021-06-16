@@ -37,6 +37,8 @@ public class CreateTable implements Statement {
     private boolean orReplace = false;
 
     private RowMovement rowMovement;
+    private Distributed distributed;
+
 
     @Override
     public void accept(StatementVisitor statementVisitor) {
@@ -160,6 +162,14 @@ public class CreateTable implements Statement {
         this.rowMovement = rowMovement;
     }
 
+    public Distributed getDistributed() {
+        return distributed;
+    }
+
+    public void setDistributed(Distributed distributed) {
+        this.distributed = distributed;
+    }
+
     @Override
     @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity"})
     public String toString() {
@@ -199,6 +209,10 @@ public class CreateTable implements Statement {
         if (likeTable != null) {
             sql += " LIKE " + (selectParenthesis ? "(" : "") + likeTable.toString() + (selectParenthesis ? ")" : "");
         }
+        if (distributed != null) {
+            sql += " " + distributed.toString();
+        }
+
         return sql;
     }
 

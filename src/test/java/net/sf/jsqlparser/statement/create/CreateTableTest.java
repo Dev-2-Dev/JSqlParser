@@ -853,6 +853,11 @@ public class CreateTableTest {
     }
 
     @Test
+    public void testTestDistributed2() throws JSQLParserException {
+      assertSqlCanBeParsedAndDeparsed("CREATE TEMP TABLE t AS (SELECT * FROM t2) DISTRIBUTED RANDOMLY");
+    }
+
+    @Test
     public void testCreateUnionIssue1309() throws JSQLParserException {
         assertSqlCanBeParsedAndDeparsed(
                 "CREATE TABLE temp.abc AS (SELECT c FROM t1) UNION (SELECT c FROM t2)");
