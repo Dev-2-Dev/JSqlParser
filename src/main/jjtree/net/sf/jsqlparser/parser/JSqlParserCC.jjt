@@ -4298,7 +4298,7 @@ CastExpression CastExpression():
 {
     <K_CAST> 
     "(" 
-    expression=SimpleExpression() 
+    expression=Condition() 
     <K_AS> { retval.setUseCastKeyword(true); } 
     ( 
         LOOKAHEAD(3) rowConstructor = RowConstructor() { retval.setRowConstructor(rowConstructor); } 
