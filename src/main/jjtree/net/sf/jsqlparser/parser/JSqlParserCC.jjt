@@ -665,7 +665,7 @@ Block Block() #Block : {
             error_skipto(ST_SEMICOLON);
         } else {
             throw e;
-        }           
+        }
     }
     {
         stmts.setStatements(list);
@@ -1266,7 +1266,7 @@ Replace Replace():
    {
         if (!columns.isEmpty()) {
            replace.withColumns(columns);
-        } 
+        }
         return replace.withTable(table);
    }
 }
@@ -1387,7 +1387,7 @@ Insert Insert( List<WithItem> with ):
     ]
 
     {
-        if (!columns.isEmpty()) { 
+        if (!columns.isEmpty()) {
             insert.setColumns(columns);
         }
         return insert.withWithItemsList(with)
@@ -1667,6 +1667,7 @@ String RelObjectNameWithoutValue() :
       /* Keywords for ALTER SESSION */
       /* | tk=<K_NAME> */ | tk=<K_TIMEOUT> | tk=<K_PARALLEL>
       | tk=<K_RANDOMLY> | tk=<K_REPLICATED>
+      | tk=<K_CACHE> 
 
       | tk=<K_LINK>
       /* Keywords for ALTER SYSTEM */
@@ -3139,8 +3140,8 @@ Expression InExpression() #InExpression :
     ExpressionList expressionList = null;
 }
 {
-        leftExpression=SimpleExpression() { result.setLeftExpression(leftExpression); }
-        [ "(" "+" ")" { result.setOldOracleJoinSyntax(EqualsTo.ORACLE_JOIN_RIGHT); } ]
+    leftExpression=SimpleExpression() { result.setLeftExpression(leftExpression); }
+    [ "(" "+" ")" { result.setOldOracleJoinSyntax(EqualsTo.ORACLE_JOIN_RIGHT); } ]
 
     [<K_NOT> { result.setNot(true); } ] <K_IN>
     (
@@ -3477,8 +3478,8 @@ Expression SimpleExpression():
     Token operation = null;
 }
 {
-    [ LOOKAHEAD(UserVariable() ("=" | ":=") ) 
-        user = UserVariable() 
+    [ LOOKAHEAD(UserVariable() ("=" | ":=") )
+        user = UserVariable()
        ( operation = "=" | operation = ":=" )
     ]
     retval=ConcatExpression()
@@ -3489,7 +3490,7 @@ Expression SimpleExpression():
             assignment.setOperation(operation.image);
             assignment.setExpression(retval);
             return assignment;
-        } else 
+        } else
             return retval;
     }
 }
@@ -4403,7 +4404,7 @@ RowConstructor RowConstructor(): {
 }
 
 /**
-TODO: VariableExpression should be a standalone class with more operations available. 
+TODO: VariableExpression should be a standalone class with more operations available.
 */
 EqualsTo VariableExpression(): {
     Expression left;
@@ -4606,9 +4607,9 @@ XMLSerializeExpr XMLSerializeExpr(): {
    ColDataType dataType;
 }
 {
-    <K_XMLSERIALIZE> 
-        "(" <K_XMLAGG> 
-                "(" <K_XMLTEXT> 
+    <K_XMLSERIALIZE>
+        "(" <K_XMLAGG>
+                "(" <K_XMLTEXT>
                         "(" expression=SimpleExpression() ")"
                 [ orderByElements=OrderByElements() ]
         ")"
@@ -5538,7 +5539,7 @@ AlterExpression AlterExpression():
                         alterExp.setFkSourceTable(fkTable.getName());
                         alterExp.setFkSourceColumns(columnNames); 
                     }
-                                
+
                 [LOOKAHEAD(2) (<K_ON> (tk=<K_DELETE> | tk=<K_UPDATE>) action = Action()
                         		  { alterExp.setReferentialAction(ReferentialAction.Type.valueOf(tk.image), action); }
                                   )]
@@ -5564,7 +5565,7 @@ AlterExpression AlterExpression():
                         fkIndex.withTable(fkTable).withReferencedColumnNames(columnNames);
                         alterExp.setIndex(fkIndex);
                     }
-                                
+
                 [LOOKAHEAD(2) (<K_ON> (tk=<K_DELETE> | tk=<K_UPDATE>) action = Action()
                         		  { fkIndex.setReferentialAction(ReferentialAction.Type.valueOf(tk.image), action); }
                                   )]
@@ -5623,9 +5624,9 @@ AlterExpression AlterExpression():
                              )
             )
             |
-            ( sk3=RelObjectName() <K_COMMENT> 
-                tk=<S_CHAR_LITERAL> { 
-                    alterExp.withColumnName(sk3).withCommentText(tk.image); 
+            ( sk3=RelObjectName() <K_COMMENT>
+                tk=<S_CHAR_LITERAL> {
+                    alterExp.withColumnName(sk3).withCommentText(tk.image);
                 }
             )
           )
