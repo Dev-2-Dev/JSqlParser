@@ -2146,6 +2146,9 @@ public class SelectTest {
         stmt = "SELECT * FROM a EXCEPT SELECT * FROM b";
         Statement parsed = parserManager.parse(new StringReader(stmt));
         assertStatementCanBeDeparsedAs(parsed, "SELECT * FROM a EXCEPT SELECT * FROM b");
+
+        assertSqlCanBeParsedAndDeparsed("(SELECT * FROM a) EXCEPT ALL (SELECT * FROM b)");
+        assertSqlCanBeParsedAndDeparsed("SELECT * FROM a EXCEPT ALL SELECT * FROM b");
     }
 
     @Test

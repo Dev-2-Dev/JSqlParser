@@ -1901,6 +1901,23 @@ PlainSelect PlainSelect() #PlainSelect:
     }
 }
 
+SetOperation SetOperation() #SetOperation: {
+    SetOperation setOperation = null;
+}
+{
+    ((<K_UNION> { UnionOp union = new UnionOp(); setOperation = union; linkAST(setOperation, jjtThis); }
+        [ <K_ALL> { union.setAll(true); } | <K_DISTINCT> { union.setDistinct(true); } ] )
+    |(
+        ((<K_INTERSECT> { setOperation = new IntersectOp(); } )
+        | (<K_MINUS>  { setOperation = new MinusOp(); } )
+        | (<K_EXCEPT> { setOperation = new ExceptOp(); } )
+        )
+        { linkAST(setOperation, jjtThis); }
+        [ <K_ALL> { setOperation.setAll(true); } ]
+    ))
+    { return setOperation; }
+}
+
 SelectBody SetOperationList() #SetOperationList: {
     SetOperationList list = new SetOperationList();
     List<OrderByElement> orderByElements = null;
@@ -1912,17 +1929,13 @@ SelectBody SetOperationList() #SetOperationList: {
     List<SetOperation> operations = new ArrayList<SetOperation>();
     List<Boolean> brackets = new ArrayList<Boolean>();
     boolean bracket = false;
+    SetOperation setOperation = null;
 }
 {
     (("(" select=SelectBody() ")" { bracket=true;} )
                     | ( select=PlainSelect() | select=Values() ) { bracket=false;} ) {selects.add(select);brackets.add(bracket); }   
-    ( LOOKAHEAD(2)
-        ((<K_UNION> { UnionOp union = new UnionOp();linkAST(union,jjtThis);operations.add(union); } [ <K_ALL> { union.setAll(true); } | <K_DISTINCT> { union.setDistinct(true); } ])
-        | <K_INTERSECT> { operations.add(new IntersectOp()); }
-        | <K_MINUS> { operations.add(new MinusOp()); }
-        | <K_EXCEPT> { operations.add(new ExceptOp()); }
-        )
-
+    (LOOKAHEAD(2)
+        (setOperation = SetOperation() { operations.add(setOperation); })
         (("(" select=SelectBody() ")" { bracket=true;} ) | ( select=PlainSelect() | select=Values() ) { bracket=false;} ) {selects.add(select);brackets.add(bracket);}
     )*
 
@@ -1967,6 +1980,7 @@ SelectBody SetOperationListWithoutIntialSelect(FromItem fromItem) #SetOperationL
     List<SetOperation> operations = new ArrayList<SetOperation>();
     List<Boolean> brackets = new ArrayList<Boolean>();
     boolean bracket = false;
+    SetOperation setOperation = null;
 }
 {
     {
@@ -1983,13 +1997,8 @@ SelectBody SetOperationListWithoutIntialSelect(FromItem fromItem) #SetOperationL
         selects.add(select);
         brackets.add(true);
     } 
-    ( LOOKAHEAD(2) 
-        ((<K_UNION> { UnionOp union = new UnionOp();linkAST(union,jjtThis);operations.add(union); } [ <K_ALL> { union.setAll(true); } | <K_DISTINCT> { union.setDistinct(true); } ])
-        | <K_INTERSECT> { operations.add(new IntersectOp()); }
-        | <K_MINUS> { operations.add(new MinusOp()); }
-        | <K_EXCEPT> { operations.add(new ExceptOp()); }
-        )
-
+    ( LOOKAHEAD(2)
+        (setOperation = SetOperation() { operations.add(setOperation); })
         "(" select=SelectBody() ")" { bracket=true;}  {selects.add(select);brackets.add(bracket);}
     )+
 

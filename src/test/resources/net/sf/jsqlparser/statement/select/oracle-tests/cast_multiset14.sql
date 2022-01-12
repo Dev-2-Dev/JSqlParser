@@ -13,3 +13,4 @@ from customers_demo
 order by customer_id
 
 --@FAILURE: Encountered unexpected token: "intersect" "INTERSECT" recorded first on Aug 3, 2021, 7:20:08 AM
+--@FAILURE: Encountered unexpected token: "cust_address2_ntab" <S_IDENTIFIER> recorded first on 12 янв. 2022 г., 20:03:40

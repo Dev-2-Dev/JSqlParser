@@ -14,18 +14,9 @@ import net.sf.jsqlparser.statement.select.SetOperationList.SetOperationType;
 public class UnionOp extends SetOperation {
 
     private boolean distinct;
-    private boolean all;
 
     public UnionOp() {
         super(SetOperationType.UNION);
-    }
-
-    public boolean isAll() {
-        return all;
-    }
-
-    public void setAll(boolean all) {
-        this.all = all;
     }
 
     public boolean isDistinct() {
@@ -37,14 +28,12 @@ public class UnionOp extends SetOperation {
     }
 
     @Override
-    public String toString() {
-        String allDistinct = "";
-        if (isAll()) {
-            allDistinct = " ALL";
-        } else if (isDistinct()) {
-            allDistinct = " DISTINCT";
+    protected String modifierToString() {
+        if (isDistinct()) {
+            return " DISTINCT";
+        } else {
+            return super.modifierToString();
         }
-        return super.toString() + allDistinct;
     }
 
     public UnionOp withDistinct(boolean distinct) {
