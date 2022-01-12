@@ -34,14 +34,18 @@ import net.sf.jsqlparser.schema.Column;
  * @author are
  */
 public class ConnectByRootOperator extends ASTNodeAccessImpl implements Expression {
-    private final Column column;
+    private Column column;
 
     public ConnectByRootOperator(Column column) {
-        this.column = Objects.requireNonNull(column, "The COLUMN of the ConnectByRoot Operator must not be null");
+        this.setColumn(column);
     }
 
     public Column getColumn() {
         return column;
+    }
+
+    public void setColumn(Column column) {
+        this.column = Objects.requireNonNull(column, "The COLUMN of the ConnectByRoot Operator must not be null");
     }
 
     @Override

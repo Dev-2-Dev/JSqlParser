@@ -18,11 +18,11 @@ import net.sf.jsqlparser.parser.ASTNodeAccessImpl;
  */
 public class OracleNamedFunctionParameter extends ASTNodeAccessImpl implements Expression {
     private final String name;
-    private final Expression expression;
+    private Expression expression;
 
     public OracleNamedFunctionParameter(String name, Expression expression) {
         this.name = Objects.requireNonNull(name, "The NAME of the OracleNamedFunctionParameter must not be null.");
-        this.expression = Objects.requireNonNull(expression, "The EXPRESSION of the OracleNamedFunctionParameter must not be null.");
+        this.setExpression(expression);
     }
 
     public String getName() {
@@ -31,6 +31,10 @@ public class OracleNamedFunctionParameter extends ASTNodeAccessImpl implements E
 
     public Expression getExpression() {
         return expression;
+    }
+
+    public void setExpression(Expression expression) {
+        this.expression  = Objects.requireNonNull(expression, "The EXPRESSION of the OracleNamedFunctionParameter must not be null.");
     }
 
     @Override

@@ -230,7 +230,7 @@ public class Join extends ASTNodeAccessImpl {
         return onExpressions.get(0);
     }
 
-    public Collection<Expression> getOnExpressions() {
+    public List<Expression> getOnExpressions() {
         return onExpressions;
     }
 

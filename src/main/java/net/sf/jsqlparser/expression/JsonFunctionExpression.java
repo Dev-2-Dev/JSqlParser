@@ -18,15 +18,19 @@ import java.util.Objects;
  */
 
 public class JsonFunctionExpression {
-    private final Expression expression;
+    private Expression expression;
 
     private boolean usingFormatJson = false;
 
     public JsonFunctionExpression(Expression expression) {
-        this.expression = Objects.requireNonNull(expression, "The EXPRESSION must not be null");
+        this.setExpression(expression);
     }
     public Expression getExpression() {
         return expression;
+    }
+
+    public void setExpression(Expression expression) {
+        this.expression = Objects.requireNonNull(expression, "The EXPRESSION must not be null");
     }
 
     public boolean isUsingFormatJson() {
