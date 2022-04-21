@@ -83,6 +83,13 @@ public class CreateViewTest {
     }
 
     @Test
+    public void testCreateMaterializedDailyView() throws JSQLParserException {
+        String stmt = "CREATE MATERIALIZED DAILY VIEW view1 AS SELECT a, b FROM testtab";
+        assertSqlCanBeParsedAndDeparsed(stmt);
+    }
+
+
+    @Test
     public void testCreateForceView() throws JSQLParserException {
         assertSqlCanBeParsedAndDeparsed("CREATE FORCE VIEW view1 AS SELECT a, b FROM testtab");
     }

@@ -25,6 +25,7 @@ public class CreateView implements Statement {
     private Table view;
     private Select select;
     private boolean orReplace = false;
+    private List<String> createOptionsStrings;
     private List<String> columnNames = null;
     private boolean materialized = false;
     private ForceOption force = ForceOption.NONE;
@@ -103,6 +104,14 @@ public class CreateView implements Statement {
         this.withReadOnly = withReadOnly;
     }
 
+    public List<String> getCreateOptionsStrings() {
+        return createOptionsStrings;
+    }
+
+    public void setCreateOptionsStrings(List<String> createOptionsStrings) {
+        this.createOptionsStrings = createOptionsStrings;
+    }
+
     @Override
     public String toString() {
         StringBuilder sql = new StringBuilder("CREATE ");
@@ -127,6 +136,12 @@ public class CreateView implements Statement {
         if (isMaterialized()) {
             sql.append("MATERIALIZED ");
         }
+
+        String createOps = PlainSelect.getStringList(createOptionsStrings, false, false);
+        if (!createOps.isEmpty()) {
+            sql.append(createOps).append(" ");
+        }
+
         sql.append("VIEW ");
         sql.append(view);
         if (columnNames != null) {

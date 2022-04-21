@@ -59,6 +59,11 @@ public class CreateViewDeParser extends AbstractDeParser<CreateView> {
         if (createView.isMaterialized()) {
             buffer.append("MATERIALIZED ");
         }
+        String params = PlainSelect.getStringList(createView.getCreateOptionsStrings(), false, false);
+        if (!params.isEmpty()) {
+            buffer.append(params).append(' ');
+        }
+
         buffer.append("VIEW ").append(createView.getView().getFullyQualifiedName());
         if (createView.getColumnNames() != null) {
             buffer.append(PlainSelect.getStringList(createView.getColumnNames(), true, true));

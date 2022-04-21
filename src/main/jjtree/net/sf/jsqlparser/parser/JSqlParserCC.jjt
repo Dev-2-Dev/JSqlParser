@@ -5115,6 +5115,8 @@ CreateView CreateView():
 {
     CreateView createView = new CreateView();
     Table view = null;
+    List<String> parameter = new ArrayList<String>();
+    List<String> createOptions = new ArrayList<String>();
     Select select = null;
     List<String> columnNames = null;
 }
@@ -5129,13 +5131,20 @@ CreateView CreateView():
         <K_TEMP> { createView.setTemporary(TemporaryOption.TEMP); }
         | <K_TEMPORARY> { createView.setTemporary(TemporaryOption.TEMPORARY); }
     ]
-    [ <K_MATERIALIZED> { createView.setMaterialized(true);} ]
+    [ <K_MATERIALIZED> { createView.setMaterialized(true);}
+        (parameter = CreateParameter() { createOptions.addAll(parameter); })*
+    ]
+
     <K_VIEW> view=Table() { createView.setView(view); }
     [ columnNames = ColumnsNamesList() { createView.setColumnNames(columnNames); } ]
     <K_AS>
     select=SelectWithWithItems( ) { createView.setSelect(select); }
     [ <K_WITH> <K_READ> <K_ONLY> { createView.setWithReadOnly(true); } ]
-    { return createView; }
+    {
+        if (createOptions.size() > 0)
+            createView.setCreateOptionsStrings(createOptions);
+        return createView;
+    }
 }
 
 ReferentialAction.Action Action():
